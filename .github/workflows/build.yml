@@ -36,16 +36,12 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    
-    - name: Check Input
-      if: inputs.publishname != ""
-      env:
-        PublishName: inputs.publishname
         
     - name: Check Input2
-      if: inputs.publishname == ""
       env:
-        PublishName: inputs.solution
+        PublishName: inputs.publishname
+      if: inputs.publishname != ""
+      run: echo ${{ inputs.publishname }} >> $PublishName
     
     - uses: actions/checkout@v2
       with:
