@@ -33,13 +33,15 @@ on:
       
 jobs:
   build:
+  
     runs-on: windows-latest
+    
+    env:
+      PublishName: inputs.publishname
 
     steps:
         
     - name: Check Input2
-      env:
-        PublishName: inputs.publishname
       if: inputs.publishname != ''
       run: echo ${{ inputs.publishname }} >> $PublishName
     
