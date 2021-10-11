@@ -1,4 +1,4 @@
-name: "Build: ${{ secrets.WORKFLOW_USERNAME }}"
+name: "Build"
 
 on:
   workflow_call:
