@@ -8,8 +8,7 @@ on:
         required: true
         type: string
       branch:
-        description: Branchname
-        required: true
+        description: "Branchname(default: dev)"
         default: dev
         type: string
       solution:
@@ -20,6 +19,10 @@ on:
         description: Publish-Type
         default: WebPublish
         type: string
+      publishname:
+        description: "Name of Publish"
+        type: string
+        required: false
     secrets:
       username:
         description: GitHub-Username
@@ -33,6 +36,16 @@ jobs:
     runs-on: windows-latest
 
     steps:
+    
+    - name: Check Input
+      if: inputs.publishname != ""
+      env:
+        PublishName: inputs.publishname
+        
+    - name: Check Input2
+      if: inputs.publishname == ""
+      env:
+        PublishName: inputs.solution
     
     - uses: actions/checkout@v2
       with:
@@ -60,11 +73,12 @@ jobs:
       run: msbuild.exe ${{ inputs.solution }}.sln /nologo /nr:false /p:DeployOnBuild=true /p:DeployDefaultTarget=${{ inputs.publishtype }} /p:WebPublishMethod=FileSystem /p:DeleteExistingFiles=True /p:platform="Any CPU" /p:configuration="Release" /p:PublishUrl='${{ github.workspace }}\_build'
     
     - name: Zip Build
-      run: Compress-Archive -Path '${{ github.workspace }}\_build' -DestinationPath '.\${{ inputs.solution }}.zip'
+      run: Compress-Archive -Path '${{ github.workspace }}\_build' -DestinationPath '.\${{ env.PublishName }}.zip'
       
     - name: Archive production artifacts
       uses: actions/upload-artifact@v2
       with:
-        name: ${{ inputs.solution }}
-        path: .\${{ inputs.solution }}.zip
+        name: ${{ env.PublishName }}
+        path: .\${{ env.PublishName }}.zip
         if-no-files-found: error
+        retention-days: 7
