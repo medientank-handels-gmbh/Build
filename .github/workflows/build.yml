@@ -22,6 +22,10 @@ on:
         description: "Name of Publish"
         type: string
         required: false
+      release:
+        description: "Is a Release"
+        type: boolean
+        default: false
     secrets:
       username:
         description: GitHub-Username
@@ -49,6 +53,13 @@ jobs:
       with:
         repository: ${{ inputs.repository }}
         ref: ${{ inputs.branch }}
+    
+    - name: Get Version
+      id: Version
+      if: inputs.release == true
+      run: |
+        $var = select-string -Pattern "AssemblyFileVersion..(\d+\.\d+\.\d+\.\d+)" -Path ${{ github.workspace }}w\Properties\AssemblyInfo.cs  | % { $_.Matches } | % {$_.Groups[1]} | % { $_.Value }
+        echo "::set-output name=var::$var"
     
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v1.0.3
@@ -79,9 +90,34 @@ jobs:
       run: Compress-Archive -Path '${{ github.workspace }}\_build\*' -DestinationPath '.\${{ env.PublishName }}.zip'
       
     - name: Archive production artifacts
+      if: inputs.release == false
       uses: actions/upload-artifact@v2
       with:
         name: ${{ env.PublishName }}
         path: .\${{ env.PublishName }}.zip
         if-no-files-found: error
         retention-days: 7
+        
+    - name: Create Release
+      id: create_release
+      if: inputs.release == true
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.Version.outputs.var }}
+        release_name: ${{ steps.Version.outputs.var }}
+        draft: false
+        prerelease: false
+        
+    - name: Upload Release Asset
+      id: upload-release-asset 
+      if: inputs.release == true
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        asset_path: .\CheckAndTrackWeb.zip
+        asset_name: CheckAndTrackWeb.zip
+        asset_content_type: application/zip
