@@ -20,11 +20,10 @@ on:
         description: Publish-Type
         default: WebPublish
         type: string
+    secrets:
       username:
         description: GitHub-Username
         required: true
-        type: string
-    secrets:
       token:
         description: Nuget-Read-Token
         required: true
