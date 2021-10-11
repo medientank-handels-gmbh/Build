@@ -37,11 +37,11 @@ jobs:
     runs-on: windows-latest
     
     env:
-      PublishName: inputs.publishname
+      PublishName: $ {{inputs.publishnameb }}
 
     steps:
         
-    - name: Check Input2
+    - name: Check Input
       if: inputs.publishname != ''
       run: echo ${{ inputs.publishname }} >> $PublishName
     
@@ -65,13 +65,13 @@ jobs:
       run: mkdir ${{ github.workspace }}\_build
       
     - name: Restore Packages
-      run: nuget restore IO.Swagger.sln
+      run: nuget restore ${{ inputs.solution }}.sln
 
     - name: Build Solution
       run: msbuild.exe ${{ inputs.solution }}.sln /nologo /nr:false /p:DeployOnBuild=true /p:DeployDefaultTarget=${{ inputs.publishtype }} /p:WebPublishMethod=FileSystem /p:DeleteExistingFiles=True /p:platform="Any CPU" /p:configuration="Release" /p:PublishUrl='${{ github.workspace }}\_build'
     
     - name: Zip Build
-      run: Compress-Archive -Path '${{ github.workspace }}\_build' -DestinationPath '.\${{ env.PublishName }}.zip'
+      run: Compress-Archive -Path '${{ github.workspace }}\_build\*' -DestinationPath '.\${{ env.PublishName }}.zip'
       
     - name: Archive production artifacts
       uses: actions/upload-artifact@v2
