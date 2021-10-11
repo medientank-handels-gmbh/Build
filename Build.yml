@@ -1,15 +1,17 @@
 name: "Build: ${{ secrets.WORKFLOW_USERNAME }}"
 
 on:
-  workflow_dispatch:
+  workflow_call:
     inputs:
       repository:
         description: 'Repository'
         required: true
+        type: string
       branch:
         description: 'Branchname'
         required: true
         default: dev
+        type: string
 
 jobs:
   build:
