@@ -1,0 +1,52 @@
+name: "Build: ${{ secrets.WORKFLOW_USERNAME }}"
+
+on:
+  workflow_dispatch:
+    inputs:
+      repository:
+        description: 'Repository'
+        required: true
+      branch:
+        description: 'Branchname'
+        required: true
+        default: dev
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    
+    - uses: actions/checkout@v2
+      with:
+        ref: 
+    
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v1.0.3
+      
+    - name: Navigate to Workspace
+      run: cd $GITHUB_WORKSPACE1
+
+    - name: Setup NuGet
+      run: |
+        Invoke-WebRequest https://dist.nuget.org/win-x86-commandline/latest/nuget.exe
+        nuget sources add -Source https://nuget.pkg.github.com/medientank-handels-gmbh/index.json -username ${{ secrets.WORKFLOW_USERNAME }} -password ${{ secrets.WORKFLOWNUGETTOKKEN }}   
+
+    - name: Create Build Directory
+      run: mkdir _build
+      
+    - name: Restore Packages
+      run: nuget restore IO.Swagger.sln
+
+    - name: Build Solution
+      run: msbuild.exe IO.Swagger.sln /nologo /nr:false /p:DeployOnBuild=true /p:DeployDefaultTarget=WebPublish /p:WebPublishMethod=FileSystem /p:DeleteExistingFiles=True /p:platform="Any CPU" /p:configuration="Release" /p:PublishUrl='${{ github.workspace }}\_build'
+    
+    - name: Zip Build
+      run: Compress-Archive -Path '${{ github.workspace }}\_build' -DestinationPath '.\SwaggerAwakREST_API.zip'
+      
+    - name: Archive production artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: SwaggerAwakREST_API
+        path: .\SwaggerAwakREST_API.zip
+        if-no-files-found: error
