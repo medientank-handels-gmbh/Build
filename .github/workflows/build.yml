@@ -58,7 +58,7 @@ jobs:
       id: Version
       if: inputs.release == true
       run: |
-        $var = select-string -Pattern "AssemblyFileVersion..(\d+\.\d+\.\d+\.\d+)" -Path ${{ github.workspace }}\Properties\AssemblyInfo.cs  | % { $_.Matches } | % {$_.Groups[1]} | % { $_.Value }
+        $var = select-string -Pattern "AssemblyFileVersion..(\d+\.\d+\.\d+\.\d+)" -Path ${{ github.workspace }}?${{ inputs.solution }}\Properties\AssemblyInfo.cs  | % { $_.Matches } | % {$_.Groups[1]} | % { $_.Value }
         echo "::set-output name=var::$var"
     
     - name: Setup MSBuild
