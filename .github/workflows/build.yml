@@ -37,7 +37,7 @@ jobs:
     runs-on: windows-latest
     
     env:
-      PublishName: $ {{inputs.publishnameb }}
+      PublishName: $ {{inputs.publishname }}
 
     steps:
         
