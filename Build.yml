@@ -12,7 +12,14 @@ on:
         required: true
         default: dev
         type: string
-
+      solution:
+        description: 'Solution'
+        reqiered: true
+        type: string
+      publishtype:
+        description: 'Publish-Type'
+        default: 'WebPublish'
+        type: string
 jobs:
   build:
     runs-on: windows-latest
@@ -21,7 +28,8 @@ jobs:
     
     - uses: actions/checkout@v2
       with:
-        ref: 
+        repository: ${{ github.events.inputs.repository }}
+        ref: ${{ github.events.inputs.branch }}
     
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v1.0.3
@@ -35,20 +43,20 @@ jobs:
         nuget sources add -Source https://nuget.pkg.github.com/medientank-handels-gmbh/index.json -username ${{ secrets.WORKFLOW_USERNAME }} -password ${{ secrets.WORKFLOWNUGETTOKKEN }}   
 
     - name: Create Build Directory
-      run: mkdir _build
+      run: mkdir ${{ github.workspace }}\_build
       
     - name: Restore Packages
       run: nuget restore IO.Swagger.sln
 
     - name: Build Solution
-      run: msbuild.exe IO.Swagger.sln /nologo /nr:false /p:DeployOnBuild=true /p:DeployDefaultTarget=WebPublish /p:WebPublishMethod=FileSystem /p:DeleteExistingFiles=True /p:platform="Any CPU" /p:configuration="Release" /p:PublishUrl='${{ github.workspace }}\_build'
+      run: msbuild.exe ${{ github.events.inputs.solution }}.sln /nologo /nr:false /p:DeployOnBuild=true /p:DeployDefaultTarget=${{ github.events.inputs.publishtype }} /p:WebPublishMethod=FileSystem /p:DeleteExistingFiles=True /p:platform="Any CPU" /p:configuration="Release" /p:PublishUrl='${{ github.workspace }}\_build'
     
     - name: Zip Build
-      run: Compress-Archive -Path '${{ github.workspace }}\_build' -DestinationPath '.\SwaggerAwakREST_API.zip'
+      run: Compress-Archive -Path '${{ github.workspace }}\_build' -DestinationPath '.\${{ github.events.inputs.solution }}.zip'
       
     - name: Archive production artifacts
       uses: actions/upload-artifact@v2
       with:
-        name: SwaggerAwakREST_API
-        path: .\SwaggerAwakREST_API.zip
+        name: ${{ github.events.inputs.solution }}
+        path: .\${{ github.events.inputs.solution }}.zip
         if-no-files-found: error
