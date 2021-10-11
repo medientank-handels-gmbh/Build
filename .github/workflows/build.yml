@@ -35,15 +35,16 @@ jobs:
   build:
   
     runs-on: windows-latest
-    
-    env:
-      PublishName: ${{ inputs.solution }}
 
     steps:
         
     - name: Check Input
       if: inputs.publishname != ''
-      run: echo ${{ inputs.publishname }} >> $PublishName
+      run: echo "PublishName=$inputs.publishname" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf-8 -Append
+      
+    - name: Check Input2
+      if: inputs.publishname == ''
+      run: echo "PublishName=$inputs.solution" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf-8 -Append
     
     - uses: actions/checkout@v2
       with:
