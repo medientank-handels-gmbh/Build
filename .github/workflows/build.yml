@@ -16,7 +16,7 @@ on:
         required: true
         type: string
       publishtype:
-        description: Publish-Type
+        description: "Publish-Type(default: WebPublish)"
         default: WebPublish
         type: string
       publishname:
