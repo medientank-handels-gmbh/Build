@@ -58,7 +58,7 @@ jobs:
       id: Version
       if: inputs.release == true
       run: |
-        $files = gci -recurse -filter "AssemblyInfo.cs" -File -Name
+        $files = gci -path ./${{ solution }} -recurse -filter "AssemblyInfo.cs" -File -Name
         $var = select-string -Path $files -Pattern "AssemblyFileVersion..(\d+\.\d+\.\d+\.\d+)"  | % { $_.Matches } | % {$_.Groups[1]} | % { $_.Value }
         echo "::set-output name=var::$var"
     
