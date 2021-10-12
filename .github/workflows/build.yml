@@ -61,7 +61,7 @@ jobs:
         $files = gci -path ./${{ inputs.solution }} -recurse -filter "AssemblyInfo.cs" -File -Name
         echo $files
         ls
-        $var = select-string -Path $files -Pattern "AssemblyFileVersion..(\d+\.\d+\.\d+\.\d+)"  | % { $_.Matches } | %
+        $var = select-string -Path $files -Pattern "AssemblyFileVersion..(\d+\.\d+\.\d+\.\d+)"  | % { $_.Matches } | % {$_.Groups[1]} | % { $_.Value }
         echo "::set-output name=var::$var"
     
     - name: Setup MSBuild
