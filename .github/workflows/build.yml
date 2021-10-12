@@ -54,19 +54,19 @@ jobs:
         repository: ${{ inputs.repository }}
         ref: ${{ inputs.branch }}
     
-    - name: Navigate to Workspace
-      run: cd $GITHUB_WORKSPACE1
-    
     - name: Get Version
       id: Version
       if: inputs.release == true
       run: |
-        $files = gci -path ${{ github.workspace }}/${{ inputs.solution }} -recurse -filter "AssemblyInfo.cs" -File -Name
+        $files = gci -path .\${{ inputs.solution }} -recurse -filter "AssemblyInfo.cs" -File -Name
         $var = select-string -Path $files -Pattern "AssemblyFileVersion..(\d+\.\d+\.\d+\.\d+)"  | % { $_.Matches } | % {$_.Groups[1]} | % { $_.Value }
         echo "::set-output name=var::$var"
     
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v1.0.3
+
+    - name: Navigate to Workspace
+      run: cd $GITHUB_WORKSPACE1
 
     - name: Setup NuGet
       run: |
