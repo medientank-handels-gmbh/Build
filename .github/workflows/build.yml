@@ -58,8 +58,7 @@ jobs:
       id: Version
       if: inputs.release == true
       run: |
-        $files = gci -path .\${{ inputs.solution }} -recurse -filter "AssemblyInfo.cs" -File -Name
-        $var = select-string -Path $files -Pattern "AssemblyFileVersion..(\d+\.\d+\.\d+\.\d+)"  | % { $_.Matches } | % {$_.Groups[1]} | % { $_.Value }
+        $var = select-string -Path .\${{ inputs.solution }}\${{ inputs.solution }}\Properties\AssemblyInfo.cs -Pattern "AssemblyFileVersion..(\d+\.\d+\.\d+\.\d+)"  | % { $_.Matches } | % {$_.Groups[1]} | % { $_.Value }
         echo "::set-output name=var::$var"
     
     - name: Setup MSBuild
