@@ -54,6 +54,9 @@ jobs:
         repository: ${{ inputs.repository }}
         ref: ${{ inputs.branch }}
     
+    - name: Navigate to Workspace
+      run: cd $GITHUB_WORKSPACE1
+    
     - name: Get Version
       id: Version
       if: inputs.release == true
@@ -63,9 +66,6 @@ jobs:
     
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v1.0.3
-
-    - name: Navigate to Workspace
-      run: cd $GITHUB_WORKSPACE1
 
     - name: Setup NuGet
       run: |
