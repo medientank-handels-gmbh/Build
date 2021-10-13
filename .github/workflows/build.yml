@@ -15,7 +15,7 @@ on:
         description: Solution
         required: true
         type: string
-      publishtype:
+      webpublish:
         description: "WebPublish"
         default: false
         type: boolean
