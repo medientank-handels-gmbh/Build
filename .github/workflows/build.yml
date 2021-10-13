@@ -93,7 +93,7 @@ jobs:
       if: inputs.release == false
       uses: actions/upload-artifact@v2
       with:
-        name: ${{ env.PublishName }}
+        name: ${{ env.PublishName }}.zip
         path: .\${{ env.PublishName }}.zip
         if-no-files-found: error
         retention-days: 7
