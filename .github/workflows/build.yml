@@ -16,8 +16,9 @@ on:
         required: true
         type: string
       publishtype:
-        description: "Publish-Type"
-        type: string
+        description: "WebPublish"
+        default: false
+        type: boolean
       publishname:
         description: "Name of Publish"
         type: string
