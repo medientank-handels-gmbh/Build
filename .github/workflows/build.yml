@@ -69,9 +69,12 @@ jobs:
       uses: microsoft/setup-msbuild@v1.0.3
 
     - name: Setup NuGet
-      run: |
-        Invoke-WebRequest https://dist.nuget.org/win-x86-commandline/latest/nuget.exe
-        nuget sources add -Source https://nuget.pkg.github.com/medientank-handels-gmbh/index.json -username ${{ secrets.username }} -password ${{ secrets.token }}   
+      uses: nuget/setup-nuget@v1
+
+   # - name: Setup NuGet
+   #   run: |
+   #     Invoke-WebRequest https://dist.nuget.org/win-x86-commandline/latest/nuget.exe
+   #     nuget sources add -Source https://nuget.pkg.github.com/medientank-handels-gmbh/index.json -username ${{ secrets.username }} -password ${{ secrets.token }}   
 
     - name: Create Build Directory
       run: mkdir ${{ github.workspace }}\_build
@@ -79,13 +82,21 @@ jobs:
     - name: Restore Packages
       run: nuget restore ${{ inputs.solution }}.sln
 
-    - name: Publish Solution
-      if: inputs.webpublish == true
+    - name: Publish Solution Release
+      if: ${{ inputs.webpublish &&  inputs.release}}
       run: msbuild.exe ${{ inputs.solution }}.sln /nologo /nr:false /p:DeployOnBuild=true /p:DeployDefaultTarget=WebPublish /p:WebPublishMethod=FileSystem /p:DeleteExistingFiles=True /p:platform="Any CPU" /p:configuration="Release" /p:PublishUrl='${{ github.workspace }}\_build'
     
-    - name: Build Solutioh
-      if: inputs.webpublish == false
+    - name: Publish Solution Debug
+      if: ${{ inputs.webpublish &&  !inputs.release}}
+      run: msbuild.exe ${{ inputs.solution }}.sln /nologo /nr:false /p:DeployOnBuild=true /p:DeployDefaultTarget=WebPublish /p:WebPublishMethod=FileSystem /p:DeleteExistingFiles=True /p:platform="Any CPU" /p:configuration="Debug" /p:PublishUrl='${{ github.workspace }}\_build'
+    
+    - name: Build Solutioh Release
+      if: ${{ !inputs.webpublish &&  inputs.release}}
       run: msbuild.exe ${{ inputs.solution }}.sln /nologo -interactive:false /p:DeleteExistingFiles=True /p:platform="Any CPU" /p:configuration="Release" /p:OutDir='${{ github.workspace }}\_build'
+    
+    - name: Build Solutioh Debug
+      if: ${{ !inputs.webpublish &&  !inputs.release}}
+      run: msbuild.exe ${{ inputs.solution }}.sln /nologo -interactive:false /p:DeleteExistingFiles=True /p:platform="Any CPU" /p:configuration="Debug" /p:OutDir='${{ github.workspace }}\_build'
     
     - name: Zip Build
       run: Compress-Archive -Path '${{ github.workspace }}\_build\*' -DestinationPath '.\${{ env.PublishName }}.zip'
