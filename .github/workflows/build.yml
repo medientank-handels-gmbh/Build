@@ -69,12 +69,9 @@ jobs:
       uses: microsoft/setup-msbuild@v1.0.3
 
     - name: Setup NuGet
-      uses: nuget/setup-nuget@v1
-
-   # - name: Setup NuGet
-   #   run: |
-   #     Invoke-WebRequest https://dist.nuget.org/win-x86-commandline/latest/nuget.exe
-   #     nuget sources add -Source https://nuget.pkg.github.com/medientank-handels-gmbh/index.json -username ${{ secrets.username }} -password ${{ secrets.token }}   
+      run: |
+        Invoke-WebRequest https://dist.nuget.org/win-x86-commandline/latest/nuget.exe
+        nuget sources add -Source https://nuget.pkg.github.com/medientank-handels-gmbh/index.json -username ${{ secrets.username }} -password ${{ secrets.token }}   
 
     - name: Create Build Directory
       run: mkdir ${{ github.workspace }}\_build
