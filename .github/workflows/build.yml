@@ -132,23 +132,24 @@ jobs:
         draft: false
         prerelease: false
         
-    - name: Publish Release Package
+    - name: Build Release Package
       if: inputs.library && inputs.release
       run: |
         nuget pack -properties Configuration=Release
-        for %f in (${{ github.workspace }}\_build\*.nupkg)
-        do
-          nuget push %f ${{ secrets.GITHUB_TOKEN }} -Source https://nuget.pkg.github.com/medientank-handels-gmbh/index.json
-        done
         
-    - name: Publish Debug Package
+        
+    - name: Build Debug Package
       if: inputs.library && !inputs.release
       run: |
         nuget pack -suffix debug -properties Configuration=Debug
-        for %f in (${{ github.workspace }}\_build\*.nupkg)
-        do
-          nuget push %f ${{ secrets.GITHUB_TOKEN }} -Source https://nuget.pkg.github.com/medientank-handels-gmbh/index.json
-        done
+        
+    - name: Publish Package
+    - if: inputs.library
+      run: |
+        foreach($file in ${{ github.workspace }}\_build\*.nupkg)
+        {
+          nuget push $file ${{ secrets.GITHUB_TOKEN }} -Source https://nuget.pkg.github.com/medientank-handels-gmbh/index.json
+        }
         
     - name: Upload Release Asset
       id: upload-release-asset 
