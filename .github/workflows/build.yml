@@ -64,7 +64,7 @@ jobs:
     
     - name: Get Version
       id: Version
-      if: inputs.release == true
+      if: inputs.release
       run: |
         $var = select-string -Path "./${{ inputs.solution }}/Properties/AssemblyInfo.cs" -Pattern "AssemblyFileVersion..(\d+\.\d+\.\d+\.\d+)"  | % { $_.Matches } | % {$_.Groups[1]} | % { $_.Value }
         echo "::set-output name=var::$var"
@@ -103,7 +103,7 @@ jobs:
       run: Compress-Archive -Path '${{ github.workspace }}\_build\*' -DestinationPath '.\${{ env.PublishName }}.zip'
       
     - name: Archive production artifacts
-      if: inputs.!release || inputs.library
+      if: inputs.library || !inputs.release
       uses: actions/upload-artifact@v2
       with:
         name: ${{ env.PublishName }}.zip
@@ -133,7 +133,7 @@ jobs:
         done
         
     - name: Publish Debug Package
-      if: inputs.library && inputs.!release
+      if: inputs.library && !inputs.release
       run: |
         nuget pack -suffix debug -properties Configuration=Debug
         for f in ./*.nupkg
