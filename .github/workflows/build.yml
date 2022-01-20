@@ -103,11 +103,20 @@ jobs:
       run: Compress-Archive -Path '${{ github.workspace }}\_build\*' -DestinationPath '.\${{ env.PublishName }}.zip'
       
     - name: Archive production artifacts
-      if: inputs.library || !inputs.release
+      if: ${{ !inputs.release && !inputs.library }}
       uses: actions/upload-artifact@v2
       with:
         name: ${{ env.PublishName }}.zip
         path: .\${{ env.PublishName }}.zip
+        if-no-files-found: error
+        retention-days: 7
+        
+    - name: Archive production artifacts
+      if: inputs.library
+      uses: actions/upload-artifact@v2
+      with:
+        name: ${{ env.PublishName }}.zip
+        path: '${{ github.workspace }}\_build\*.dll'
         if-no-files-found: error
         retention-days: 7
         
@@ -127,18 +136,18 @@ jobs:
       if: inputs.library && inputs.release
       run: |
         nuget pack -properties Configuration=Release
-        for f in ./*.nupkg
+        for %f in (${{ github.workspace }}\_build\*.nupkg)
         do
-          nuget push $f ${{ secrets.GITHUB_TOKEN }} -Source https://nuget.pkg.github.com/medientank-handels-gmbh/index.json
+          nuget push %f ${{ secrets.GITHUB_TOKEN }} -Source https://nuget.pkg.github.com/medientank-handels-gmbh/index.json
         done
         
     - name: Publish Debug Package
       if: inputs.library && !inputs.release
       run: |
         nuget pack -suffix debug -properties Configuration=Debug
-        for f in ./*.nupkg
+        for %f in (${{ github.workspace }}\_build\*.nupkg)
         do
-          nuget push $f ${{ secrets.GITHUB_TOKEN }} -Source https://nuget.pkg.github.com/medientank-handels-gmbh/index.json
+          nuget push %f ${{ secrets.GITHUB_TOKEN }} -Source https://nuget.pkg.github.com/medientank-handels-gmbh/index.json
         done
         
     - name: Upload Release Asset
