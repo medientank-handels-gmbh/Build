@@ -134,17 +134,14 @@ jobs:
         
     - name: Build Release Package
       if: inputs.library && inputs.release
-      run: |
-        nuget pack -properties Configuration=Release
-        
+      run: nuget pack -properties Configuration=Release
         
     - name: Build Debug Package
       if: inputs.library && !inputs.release
-      run: |
-        nuget pack -suffix debug -properties Configuration=Debug
+      run: nuget pack -suffix debug -properties Configuration=Debug
         
     - name: Publish Package
-    - if: inputs.library
+      if: inputs.library
       run: |
         foreach($file in ${{ github.workspace }}\_build\*.nupkg)
         {
