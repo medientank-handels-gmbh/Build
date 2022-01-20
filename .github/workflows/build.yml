@@ -19,6 +19,10 @@ on:
         description: "WebPublish"
         default: false
         type: boolean
+      library:
+        description: "Is a DLL"
+        default: false
+        type: boolean
       publishname:
         description: "Name of Publish"
         type: string
@@ -36,7 +40,7 @@ on:
         required: true
       
 jobs:
-  build:
+  Build:
   
     runs-on: windows-latest
 
@@ -99,7 +103,7 @@ jobs:
       run: Compress-Archive -Path '${{ github.workspace }}\_build\*' -DestinationPath '.\${{ env.PublishName }}.zip'
       
     - name: Archive production artifacts
-      if: inputs.release == false
+      if: inputs.!release || inputs.library
       uses: actions/upload-artifact@v2
       with:
         name: ${{ env.PublishName }}.zip
@@ -109,7 +113,7 @@ jobs:
         
     - name: Create Release
       id: create_release
-      if: inputs.release == true
+      if: inputs.release
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -118,6 +122,24 @@ jobs:
         release_name: ${{ steps.Version.outputs.var }}
         draft: false
         prerelease: false
+        
+    - name: Publish Release Package
+      if: inputs.library && inputs.release
+      run: |
+        nuget pack -properties Configuration=Release
+        for f in ./*.nupkg
+        do
+          nuget push $f ${{ secrets.GITHUB_TOKEN }} -Source https://nuget.pkg.github.com/medientank-handels-gmbh/index.json
+        done
+        
+    - name: Publish Debug Package
+      if: inputs.library && inputs.!release
+      run: |
+        nuget pack -suffix debug -properties Configuration=Debug
+        for f in ./*.nupkg
+        do
+          nuget push $f ${{ secrets.GITHUB_TOKEN }} -Source https://nuget.pkg.github.com/medientank-handels-gmbh/index.json
+        done
         
     - name: Upload Release Asset
       id: upload-release-asset 
