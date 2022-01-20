@@ -134,16 +134,16 @@ jobs:
         
     - name: Build Release Package
       if: inputs.library && inputs.release
-      run: nuget pack -properties Configuration=Release
+      run: nuget '${{ inputs.solution }}\${{ inputs.solution }}.csproj' pack -properties Configuration=Release
         
     - name: Build Debug Package
       if: inputs.library && !inputs.release
-      run: nuget pack -suffix debug -properties Configuration=Debug
+      run: nuget '${{ inputs.solution }}\${{ inputs.solution }}.csproj' pack -suffix debug -properties Configuration=Debug
         
     - name: Publish Package
       if: inputs.library
       run: |
-        foreach($file in ${{ github.workspace }}\_build\*.nupkg)
+        foreach($file in Get-ChildItem '$${{ inputs.solution }}\*.nupkg')
         {
           nuget push $file ${{ secrets.GITHUB_TOKEN }} -Source https://nuget.pkg.github.com/medientank-handels-gmbh/index.json
         }
