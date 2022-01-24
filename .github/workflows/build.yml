@@ -134,11 +134,15 @@ jobs:
         
     - name: Build Release Package
       if: inputs.library && inputs.release
-      run: nuget pack './${{ inputs.solution }}/${{ inputs.solution }}.csproj' -BasePath '${{ github.workspace }}\_build' -properties Configuration=Release
+      run: |
+            Copy-Item -Path '${{ github.workspace }}\_build' -Destination '.\${{ inputs.solution }}\bin\Release' -recurse -Force
+            nuget pack './${{ inputs.solution }}/${{ inputs.solution }}.csproj' -properties Configuration=Release
         
     - name: Build Debug Package
       if: inputs.library && !inputs.release
-      run: nuget pack './${{ inputs.solution }}/${{ inputs.solution }}.csproj' -BasePath '${{ github.workspace }}\_build' -suffix debug -properties Configuration=Debug
+      run: |
+            Copy-Item -Path '${{ github.workspace }}\_build' -Destination '.\${{ inputs.solution }}\bin\Debug' -recurse -Force
+            nuget pack './${{ inputs.solution }}/${{ inputs.solution }}.csproj' -BasePath '${{ github.workspace }}\_build' -suffix debug -properties Configuration=Debug
         
     - name: Publish Package
       if: inputs.library
