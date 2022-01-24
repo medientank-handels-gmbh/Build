@@ -80,7 +80,7 @@ jobs:
     - name: Create Build Directory
       run: |
             mkdir ${{ github.workspace }}\_build
-            mkdir ${{ github.workspace }}\bin\Release
+            mkdir ${{ github.workspace }}\${{ inputs.solution }}\bin\Release
       
     - name: Restore Packages
       run: nuget restore ${{ inputs.solution }}.sln
