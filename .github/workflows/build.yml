@@ -142,7 +142,7 @@ jobs:
       if: inputs.library && !inputs.release
       run: |
             Copy-Item -Path '${{ github.workspace }}\_build' -Destination '.\${{ inputs.solution }}\bin\Debug' -recurse -Force
-            nuget pack './${{ inputs.solution }}/${{ inputs.solution }}.csproj' -BasePath '${{ github.workspace }}\_build' -suffix debug -properties Configuration=Debug
+            nuget pack './${{ inputs.solution }}/${{ inputs.solution }}.csproj' -suffix debug -properties Configuration=Debug
         
     - name: Publish Package
       if: inputs.library
