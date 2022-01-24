@@ -147,11 +147,11 @@ jobs:
         
     - name: Build Release Package
       if: inputs.library && inputs.release
-      run: nuget pack '.${{ inputs.solution }}\${{ inputs.solution }}.nuspec' -properties Configuration=Release
+      run: nuget pack '.\${{ inputs.solution }}\${{ inputs.solution }}.nuspec' -properties Configuration=Release
         
     - name: Build Debug Package
       if: inputs.library && !inputs.release
-      run: nuget pack '.${{ inputs.solution }}\${{ inputs.solution }}.nuspec' -suffix debug -properties Configuration=Debug
+      run: nuget pack '.\${{ inputs.solution }}\${{ inputs.solution }}.nuspec' -suffix debug -properties Configuration=Debug
         
     - name: Publish Package
       if: inputs.library
