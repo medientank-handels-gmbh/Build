@@ -142,13 +142,16 @@ jobs:
       if: inputs.library && !inputs.release
       run: Copy-Item -Path '${{ github.workspace }}\_build' -Destination '${{ github.workspace }}\${{ inputs.solution }}\bin\Debug' -recurse -Force
         
+    - name: Base Path
+      run: cd '${{ github.workspace }}\${{ inputs.solution }}'
+        
     - name: Build Release Package
       if: inputs.library && inputs.release
-      run: nuget pack '${{ github.workspace }}\${{ inputs.solution }}\${{ inputs.solution }}.csproj' -properties Configuration=Release
+      run: nuget pack -properties Configuration=Release
         
     - name: Build Debug Package
       if: inputs.library && !inputs.release
-      run: nuget pack '${{ github.workspace }}\${{ inputs.solution }}\${{ inputs.solution }}.csproj' -suffix debug -properties Configuration=Debug
+      run: nuget pack -suffix debug -properties Configuration=Debug
         
     - name: Publish Package
       if: inputs.library
