@@ -78,7 +78,9 @@ jobs:
         nuget sources add -Source https://nuget.pkg.github.com/medientank-handels-gmbh/index.json -username ${{ secrets.username }} -password ${{ secrets.token }}   
 
     - name: Create Build Directory
-      run: mkdir ${{ github.workspace }}\_build
+      run: |
+            mkdir ${{ github.workspace }}\_build
+            mkdir ${{ github.workspace }}\bin\Release
       
     - name: Restore Packages
       run: nuget restore ${{ inputs.solution }}.sln
@@ -133,12 +135,12 @@ jobs:
         prerelease: false
         
     - name: Copy Release DLL
-      #if: inputs.library && inputs.release
+      if: inputs.library && inputs.release
       run: Copy-Item -Path '${{ github.workspace }}\_build' -Destination '${{ github.workspace }}\${{ inputs.solution }}\bin\Release' -recurse -Force
       
-    #- name: Copy Debug DLL
-     # if: inputs.library && !inputs.release
-      #run: Copy-Item -Path '${{ github.workspace }}\_build' -Destination '${{ github.workspace }}\${{ inputs.solution }}\bin\Debug' -recurse -Force
+    - name: Copy Debug DLL
+      if: inputs.library && !inputs.release
+      run: Copy-Item -Path '${{ github.workspace }}\_build' -Destination '${{ github.workspace }}\${{ inputs.solution }}\bin\Debug' -recurse -Force
         
     - name: Build Release Package
       if: inputs.library && inputs.release
