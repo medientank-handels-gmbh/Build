@@ -135,7 +135,7 @@ jobs:
         prerelease: false
         
     - name: Copy Release DLL
-      if: inputs.library
+      if: inputs.library && inputs.release
       run: Copy-Item -Path '${{ github.workspace }}\_build\*' -Destination '${{ github.workspace }}\${{ inputs.solution }}\bin\Release' -recurse -Force
       
     - name: Copy Debug DLL
@@ -156,7 +156,7 @@ jobs:
     - name: Publish Package
       if: inputs.library
       run: |
-        foreach($file in Get-ChildItem '$${{ inputs.solution }}\*.nupkg')
+        foreach($file in Get-ChildItem '.\${{ inputs.solution }}\*.nupkg')
         {
           nuget push $file ${{ secrets.GITHUB_TOKEN }} -Source https://nuget.pkg.github.com/medientank-handels-gmbh/index.json
         }
