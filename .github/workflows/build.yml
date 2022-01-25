@@ -135,7 +135,7 @@ jobs:
         prerelease: false
         
     - name: Copy Release DLL
-      if: inputs.library && inputs.release
+      if: inputs.library
       run: Copy-Item -Path '${{ github.workspace }}\_build' -Destination '${{ github.workspace }}\${{ inputs.solution }}\bin\Release' -recurse -Force
       
     - name: Copy Debug DLL
