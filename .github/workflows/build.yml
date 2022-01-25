@@ -93,11 +93,11 @@ jobs:
       if: ${{ inputs.webpublish &&  !inputs.release}}
       run: msbuild.exe ${{ inputs.solution }}.sln /nologo /nr:false /p:DeployOnBuild=true /p:DeployDefaultTarget=WebPublish /p:WebPublishMethod=FileSystem /p:DeleteExistingFiles=True /p:platform="Any CPU" /p:configuration="Debug" /p:PublishUrl='${{ github.workspace }}\_build'
     
-    - name: Build Solutioh Release
+    - name: Build Solution Release
       if: ${{ !inputs.webpublish &&  inputs.release}}
       run: msbuild.exe ${{ inputs.solution }}.sln /nologo -interactive:false /p:DeleteExistingFiles=True /p:platform="Any CPU" /p:configuration="Release" /p:OutDir='${{ github.workspace }}\_build'
     
-    - name: Build Solutioh Debug
+    - name: Build Solution Debug
       if: ${{ !inputs.webpublish &&  !inputs.release}}
       run: msbuild.exe ${{ inputs.solution }}.sln /nologo -interactive:false /p:DeleteExistingFiles=True /p:platform="Any CPU" /p:configuration="Debug" /p:OutDir='${{ github.workspace }}\_build'
     
@@ -147,11 +147,11 @@ jobs:
         
     - name: Build Release Package
       if: inputs.library && inputs.release
-      run: nuget pack '.\${{ inputs.solution }}\${{ inputs.solution }}.nuspec' -properties Configuration=Release
+      run: nuget pack '.\${{ inputs.solution }}\${{ inputs.solution }}.csproj' -properties Configuration=Release
         
     - name: Build Debug Package
       if: inputs.library && !inputs.release
-      run: nuget pack '.\${{ inputs.solution }}\${{ inputs.solution }}.nuspec' -suffix debug -properties Configuration=Debug
+      run: nuget pack '.\${{ inputs.solution }}\${{ inputs.solution }}.csproj' -suffix debug -properties Configuration=Debug
         
     - name: Publish Package
       if: inputs.library
