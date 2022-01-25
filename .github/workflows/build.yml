@@ -156,7 +156,7 @@ jobs:
     - name: Publish Package
       if: inputs.library
       run: |
-        foreach($file in Get-ChildItem '.\${{ inputs.solution }}\*.nupkg')
+        foreach($file in Get-ChildItem '.\*.nupkg')
         {
           nuget push $file ${{ secrets.GITHUB_TOKEN }} -Source https://nuget.pkg.github.com/medientank-handels-gmbh/index.json
         }
