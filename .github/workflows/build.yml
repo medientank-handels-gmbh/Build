@@ -74,7 +74,9 @@ jobs:
         nuget sources add -Source https://nuget.pkg.github.com/medientank-handels-gmbh/index.json -username ${{ secrets.username }} -password ${{ secrets.token }}   
 
     - name: Create Build Directory
-      run: mkdir ${{ github.workspace }}\_build
+      run: |
+            mkdir ${{ github.workspace }}\_build
+            mkdir ${{ github.workspace }}\${{ inputs.solution }}\bin\Release
       
     - name: Restore Packages
       run: nuget restore ${{ inputs.solution }}.sln
@@ -83,10 +85,18 @@ jobs:
       if: inputs.webpublish == true
       run: msbuild.exe ${{ inputs.solution }}.sln /nologo /nr:false /p:DeployOnBuild=true /p:DeployDefaultTarget=WebPublish /p:WebPublishMethod=FileSystem /p:DeleteExistingFiles=True /p:platform="Any CPU" /p:configuration="Release" /p:PublishUrl='${{ github.workspace }}\_build'
     
-    - name: Build Solutioh
-      if: inputs.webpublish == false
+    - name: Publish Solution Debug
+      if: ${{ inputs.webpublish &&  !inputs.release}}
+      run: msbuild.exe ${{ inputs.solution }}.sln /nologo /nr:false /p:DeployOnBuild=true /p:DeployDefaultTarget=WebPublish /p:WebPublishMethod=FileSystem /p:DeleteExistingFiles=True /p:platform="Any CPU" /p:configuration="Debug" /p:PublishUrl='${{ github.workspace }}\_build'
+    
+    - name: Build Solution Release
+      if: ${{ !inputs.webpublish &&  inputs.release}}
       run: msbuild.exe ${{ inputs.solution }}.sln /nologo -interactive:false /p:DeleteExistingFiles=True /p:platform="Any CPU" /p:configuration="Release" /p:OutDir='${{ github.workspace }}\_build'
     
+    - name: Build Solution Debug
+      if: ${{ !inputs.webpublish &&  !inputs.release}}
+      run: msbuild.exe ${{ inputs.solution }}.sln /nologo -interactive:false /p:DeleteExistingFiles=True /p:platform="Any CPU" /p:configuration="Debug" /p:OutDir='${{ github.workspace }}\_build'
+
     - name: Zip Build
       run: Compress-Archive -Path '${{ github.workspace }}\_build\*' -DestinationPath '.\${{ env.PublishName }}.zip'
       
@@ -110,6 +120,33 @@ jobs:
         release_name: ${{ steps.Version.outputs.var }}
         draft: false
         prerelease: false
+        
+    - name: Copy Release DLL
+      if: inputs.library
+      run: Copy-Item -Path '${{ github.workspace }}\_build\*' -Destination '${{ github.workspace }}\${{ inputs.solution }}\bin\Release' -recurse -Force
+      
+    - name: Copy Debug DLL
+      if: inputs.library && !inputs.release
+      run: Copy-Item -Path '${{ github.workspace }}\_build\*' -Destination '${{ github.workspace }}\${{ inputs.solution }}\bin\Debug' -recurse -Force
+        
+    - name: Base Path
+      run: cd '${{ github.workspace }}\${{ inputs.solution }}'
+        
+    - name: Build Release Package
+      if: inputs.library && inputs.release
+      run: nuget pack '.\${{ inputs.solution }}\${{ inputs.solution }}.csproj' -properties Configuration=Release
+        
+    - name: Build Debug Package
+      if: inputs.library && !inputs.release
+      run: nuget pack '.\${{ inputs.solution }}\${{ inputs.solution }}.csproj' -suffix debug -properties Configuration=Debug
+        
+    - name: Publish Package
+      if: inputs.library
+      run: |
+        foreach($file in Get-ChildItem '.\*.nupkg')
+        {
+          nuget push $file ${{ secrets.GITHUB_TOKEN }} -Source https://nuget.pkg.github.com/medientank-handels-gmbh/index.json
+        }
         
     - name: Upload Release Asset
       id: upload-release-asset 
