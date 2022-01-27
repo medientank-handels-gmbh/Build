@@ -19,6 +19,10 @@ on:
         description: "WebPublish"
         default: false
         type: boolean
+      library:
+        description: "Is a DLL"
+        default: false
+        type: boolean
       publishname:
         description: "Name of Publish"
         type: string
