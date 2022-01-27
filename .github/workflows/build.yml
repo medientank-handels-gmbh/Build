@@ -19,10 +19,6 @@ on:
         description: "WebPublish"
         default: false
         type: boolean
-      library:
-        description: "Is a DLL"
-        default: false
-        type: boolean
       publishname:
         description: "Name of Publish"
         type: string
@@ -40,7 +36,7 @@ on:
         required: true
       
 jobs:
-  Build:
+  build:
   
     runs-on: windows-latest
 
@@ -64,7 +60,7 @@ jobs:
     
     - name: Get Version
       id: Version
-      if: inputs.release
+      if: inputs.release == true
       run: |
         $var = select-string -Path "./${{ inputs.solution }}/Properties/AssemblyInfo.cs" -Pattern "AssemblyFileVersion..(\d+\.\d+\.\d+\.\d+)"  | % { $_.Matches } | % {$_.Groups[1]} | % { $_.Value }
         echo "::set-output name=var::$var"
@@ -85,8 +81,8 @@ jobs:
     - name: Restore Packages
       run: nuget restore ${{ inputs.solution }}.sln
 
-    - name: Publish Solution Release
-      if: ${{ inputs.webpublish &&  inputs.release}}
+    - name: Publish Solution
+      if: inputs.webpublish == true
       run: msbuild.exe ${{ inputs.solution }}.sln /nologo /nr:false /p:DeployOnBuild=true /p:DeployDefaultTarget=WebPublish /p:WebPublishMethod=FileSystem /p:DeleteExistingFiles=True /p:platform="Any CPU" /p:configuration="Release" /p:PublishUrl='${{ github.workspace }}\_build'
     
     - name: Publish Solution Debug
@@ -100,12 +96,12 @@ jobs:
     - name: Build Solution Debug
       if: ${{ !inputs.webpublish &&  !inputs.release}}
       run: msbuild.exe ${{ inputs.solution }}.sln /nologo -interactive:false /p:DeleteExistingFiles=True /p:platform="Any CPU" /p:configuration="Debug" /p:OutDir='${{ github.workspace }}\_build'
-    
+
     - name: Zip Build
       run: Compress-Archive -Path '${{ github.workspace }}\_build\*' -DestinationPath '.\${{ env.PublishName }}.zip'
       
     - name: Archive production artifacts
-      if: ${{ !inputs.release && !inputs.library }}
+      if: inputs.release == false
       uses: actions/upload-artifact@v2
       with:
         name: ${{ env.PublishName }}.zip
@@ -113,18 +109,9 @@ jobs:
         if-no-files-found: error
         retention-days: 7
         
-    - name: Archive production artifacts
-      if: inputs.library
-      uses: actions/upload-artifact@v2
-      with:
-        name: ${{ env.PublishName }}.zip
-        path: '${{ github.workspace }}\_build\*.dll'
-        if-no-files-found: error
-        retention-days: 7
-        
     - name: Create Release
       id: create_release
-      if: inputs.release
+      if: inputs.release == true
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
