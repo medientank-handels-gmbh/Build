@@ -31,6 +31,10 @@ on:
         description: "Is a Release"
         type: boolean
         default: false
+      npm:
+        description: "Uses Npm"
+        type: boolean
+        default: false
     secrets:
       username:
         description: GitHub-Username
@@ -61,7 +65,15 @@ jobs:
     
     - name: Navigate to Workspace
       run: cd $GITHUB_WORKSPACE1
-    
+      
+    - name: NPM or Yarn install with caching
+      if: ${{inputs.npm}}
+      uses: bahmutov/npm-install@v1.6.0
+      
+    - name: SCSS
+      if: ${{inputs.npm}}
+      run: sass css/centauri.scss css/centauri.min.css --style=compressed
+
     - name: Get Version
       id: Version
       if: inputs.release == true
