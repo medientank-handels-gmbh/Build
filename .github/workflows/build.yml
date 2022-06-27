@@ -70,10 +70,9 @@ jobs:
       if: ${{inputs.npm}}
       uses: bahmutov/npm-install@v1.6.0
       with:
-        useLockFile: false
         working-directory: ${{ inputs.solution }}
       
-    - name: SCSS
+    - name: SASS
       if: ${{inputs.npm}}
       run: sass css/centauri.scss css/centauri.min.css --style=compressed
 
