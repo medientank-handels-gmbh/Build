@@ -71,6 +71,7 @@ jobs:
       uses: bahmutov/npm-install@v1.6.0
       with:
         useLockFile: false
+        working-directory: ${{ inputs.solution }}
       
     - name: SCSS
       if: ${{inputs.npm}}
