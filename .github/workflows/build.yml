@@ -70,12 +70,12 @@ jobs:
       if: ${{inputs.npm}}
       uses: bahmutov/npm-install@v1.6.0
       with:
-        working-directory: ${{ github.workspace }}\${{ inputs.solution }}\${{ inputs.solution }}\${{ inputs.solution }}
+        working-directory: ${{ github.workspace }}\${{ inputs.solution }}\${{ inputs.solution }}
         useLockFile: false
       
     - name: SASS
       if: ${{inputs.npm}}
-      run: ${{ github.workspace }}\${{ inputs.solution }}\${{ inputs.solution }}\${{ inputs.solution }}\sass css/centauri.scss css/centauri.min.css --style=compressed
+      run: ${{ github.workspace }}\${{ inputs.solution }}\${{ inputs.solution }}\sass css/centauri.scss css/centauri.min.css --style=compressed
 
     - name: Get Version
       id: Version
