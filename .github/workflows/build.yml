@@ -65,23 +65,6 @@ jobs:
     
     - name: Navigate to Workspace
       run: cd $GITHUB_WORKSPACE1
-      
-   # - name: NPM or Yarn install with caching
-   #   if: ${{inputs.npm}}
-   #   uses: bahmutov/npm-install@v1.6.0
-   #   with:
-   #     working-directory: ${{ github.workspace }}\${{ inputs.solution }}\
-   #     useLockFile: false
-      
-   # - name: SASS
-   #   if: ${{inputs.npm}}
-   #   run: sass css/centauri.scss css/centauri.min.css --style=compressed
-
-    - name: Compile CSS from SCSS files
-      uses: gha-utilities/sass-build@v0.4.9
-      with:
-        source: ${{ github.workspace }}\${{ inputs.solution }}\css/centauri.scss
-        destination: ${{ github.workspace }}\${{ inputs.solution }}\css/centauri.min.css
 
     - name: Get Version
       id: Version
@@ -122,15 +105,50 @@ jobs:
       if: ${{ !inputs.webpublish &&  !inputs.release}}
       run: msbuild.exe ${{ inputs.solution }}.sln /nologo -interactive:false /p:DeleteExistingFiles=True /p:platform="Any CPU" /p:configuration="Debug" /p:OutDir='${{ github.workspace }}\_build'
 
+    - name: Copy Shops
+      run: |
+            copy ${{ github.workspace }}\_build ${{ github.workspace }}\all4life
+            copy ${{ github.workspace }}\_build ${{ github.workspace }}\bboplus
+            copy ${{ github.workspace }}\_build ${{ github.workspace }}\meditec
+            copy ${{ github.workspace }}\_build ${{ github.workspace }}\pagro
+    
+    - name: Move Shop-Data
+      run: |
+          move centauriBaseShop/Shops/all4life ${{ github.workspace }}\_build ${{ github.workspace }}\all4life
+          move centauriBaseShop/Shops/bboplus ${{ github.workspace }}\_build ${{ github.workspace }}\bboplus
+          move centauriBaseShop/Shops/meditec ${{ github.workspace }}\_build ${{ github.workspace }}\meditec
+          move centauriBaseShop/Shops/pagro ${{ github.workspace }}\_build ${{ github.workspace }}\pagro
+
+    - name: Compile CSS from SCSS files
+      uses: gha-utilities/sass-build@v0.4.9
+      with:
+        source: |
+          ${{ github.workspace }}\${{ inputs.solution }}\css/centauri.scss
+          ${{ github.workspace }}\all4life\css/centauri.scss
+          ${{ github.workspace }}\bboplus\css/centauri.scss
+          ${{ github.workspace }}\meditec\css/centauri.scss
+          ${{ github.workspace }}\pagro\css/centauri.scss
+        destination: |
+          ${{ github.workspace }}\${{ inputs.solution }}\css/centauri.min.css
+          ${{ github.workspace }}\all4life\css/centauri.scss
+          ${{ github.workspace }}\bboplus\css/centauri.scss
+          ${{ github.workspace }}\meditec\css/centauri.scss
+          ${{ github.workspace }}\pagro\css/centauri.scss
+
     - name: Zip Build
-      run: Compress-Archive -Path '${{ github.workspace }}\_build\*' -DestinationPath '.\${{ env.PublishName }}.zip'
+      run: |
+        Compress-Archive -Path '${{ github.workspace }}\_build\*' -DestinationPath '.\${{ env.PublishName }}.zip'
+        Compress-Archive -Path '${{ github.workspace }}\all4life\*' -DestinationPath '.\all4life.zip'
+        Compress-Archive -Path '${{ github.workspace }}\bboplus\*' -DestinationPath '.\bboplus.zip'
+        Compress-Archive -Path '${{ github.workspace }}\meditec\*' -DestinationPath '.\meditec.zip'
+        Compress-Archive -Path '${{ github.workspace }}\pagro\*' -DestinationPath '.\pagro.zip'
       
     - name: Archive production artifacts
       if: inputs.release == false
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
-        name: ${{ env.PublishName }}.zip
-        path: .\${{ env.PublishName }}.zip
+        name: Shops.zip
+        path: .\
         if-no-files-found: error
         retention-days: 7
         
