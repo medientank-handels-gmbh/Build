@@ -66,16 +66,22 @@ jobs:
     - name: Navigate to Workspace
       run: cd $GITHUB_WORKSPACE1
       
-    - name: NPM or Yarn install with caching
-      if: ${{inputs.npm}}
-      uses: bahmutov/npm-install@v1.6.0
-      with:
-        working-directory: ${{ github.workspace }}\${{ inputs.solution }}\
-        useLockFile: false
+   # - name: NPM or Yarn install with caching
+   #   if: ${{inputs.npm}}
+   #   uses: bahmutov/npm-install@v1.6.0
+   #   with:
+   #     working-directory: ${{ github.workspace }}\${{ inputs.solution }}\
+   #     useLockFile: false
       
-    - name: SASS
-      if: ${{inputs.npm}}
-      run: sass css/centauri.scss css/centauri.min.css --style=compressed
+   # - name: SASS
+   #   if: ${{inputs.npm}}
+   #   run: sass css/centauri.scss css/centauri.min.css --style=compressed
+
+    - name: Compile CSS from SCSS files
+      uses: gha-utilities/sass-build@v0.4.9
+      with:
+        source: css/centauri.scss
+        destination: css/centauri.min.css
 
     - name: Get Version
       id: Version
