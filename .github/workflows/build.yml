@@ -80,8 +80,8 @@ jobs:
     - name: Compile CSS from SCSS files
       uses: gha-utilities/sass-build@v0.4.9
       with:
-        source: css/centauri.scss
-        destination: css/centauri.min.css
+        source: ${{ github.workspace }}\${{ inputs.solution }}\css/centauri.scss
+        destination: ${{ github.workspace }}\${{ inputs.solution }}\css/centauri.min.css
 
     - name: Get Version
       id: Version
