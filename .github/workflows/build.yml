@@ -148,7 +148,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: Shops.zip
-        path: .\
+        path: .\*.zip
         if-no-files-found: error
         retention-days: 7
         
