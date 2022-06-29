@@ -90,7 +90,7 @@ jobs:
       run: nuget restore ${{ inputs.solution }}.sln
 
     - name: Publish Solution
-      if: inputs.webpublish == true
+      if: ${{ inputs.webpublish &&  inputs.release}}
       run: msbuild.exe ${{ inputs.solution }}.sln /nologo /nr:false /p:DeployOnBuild=true /p:DeployDefaultTarget=WebPublish /p:WebPublishMethod=FileSystem /p:DeleteExistingFiles=True /p:platform="Any CPU" /p:configuration="Release" /p:PublishUrl='${{ github.workspace }}\_build'
     
     - name: Publish Solution Debug
@@ -111,10 +111,10 @@ jobs:
             mkdir ${{ github.workspace }}\bboplus
             mkdir ${{ github.workspace }}\meditec
             mkdir ${{ github.workspace }}\pagro
-            copy ${{ github.workspace }}\_build ${{ github.workspace }}\all4life
-            copy ${{ github.workspace }}\_build ${{ github.workspace }}\bboplus
-            copy ${{ github.workspace }}\_build ${{ github.workspace }}\meditec
-            copy ${{ github.workspace }}\_build ${{ github.workspace }}\pagro
+            copy ${{ github.workspace }}\_build\* ${{ github.workspace }}\all4life
+            copy ${{ github.workspace }}\_build\* ${{ github.workspace }}\bboplus
+            copy ${{ github.workspace }}\_build\* ${{ github.workspace }}\meditec
+            copy ${{ github.workspace }}\_build\* ${{ github.workspace }}\pagro
     
     - name: Move Shop-Data
       run: |
