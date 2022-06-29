@@ -202,3 +202,51 @@ jobs:
         asset_path: .\${{ env.PublishName }}.zip
         asset_name: ${{ env.PublishName }}.zip
         asset_content_type: application/zip
+        
+    - name: Upload Release Asset all4life
+      id: upload-release-asset-all4life
+      if: inputs.release == true
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        asset_path: .\all4life.zip
+        asset_name: all4life.zip
+        asset_content_type: application/zip
+        
+    - name: Upload Release Asset bboplus
+      id: upload-release-asset-bboplus
+      if: inputs.release == true
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        asset_path: .\bboplus.zip
+        asset_name: bboplus.zip
+        asset_content_type: application/zip
+        
+    - name: Upload Release Asset meditec
+      id: upload-release-asset-meditec
+      if: inputs.release == true
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        asset_path: .\meditec.zip
+        asset_name: meditec.zip
+        asset_content_type: application/zip
+        
+    - name: Upload Release Asset pagro
+      id: upload-release-asset-pagro
+      if: inputs.release == true
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        asset_path: .\pagro.zip
+        asset_name: $pagro.zip
+        asset_content_type: application/zip
