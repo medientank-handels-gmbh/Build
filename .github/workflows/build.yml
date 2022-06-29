@@ -114,10 +114,10 @@ jobs:
     
     - name: Move Shop-Data
       run: |
-        xcopy .\centauriBaseShop/Shops/all4life .\all4life /e
-        xcopy .\centauriBaseShop/Shops/bboplus .\bboplus /e
-        xcopy .\centauriBaseShop/Shops/meditec .\meditec /e
-        xcopy .\centauriBaseShop/Shops/pagro .\pagro /e
+        xcopy .\centauriBaseShop\Shops\all4life .\all4life /e
+        xcopy .\centauriBaseShop\Shops\bboplus .\bboplus /e
+        xcopy .\centauriBaseShop\Shops\meditec .\meditec /e
+        xcopy .\centauriBaseShop\Shops\pagro .\pagro /e
 
     - name: Compile CSS from SCSS files
       uses: gha-utilities/sass-build@v0.4.9
