@@ -107,21 +107,17 @@ jobs:
 
     - name: Copy Shops
       run: |
-            mkdir ${{ github.workspace }}\all4life
-            mkdir ${{ github.workspace }}\bboplus
-            mkdir ${{ github.workspace }}\meditec
-            mkdir ${{ github.workspace }}\pagro
-            copy ${{ github.workspace }}\_build\* ${{ github.workspace }}\all4life
-            copy ${{ github.workspace }}\_build\* ${{ github.workspace }}\bboplus
-            copy ${{ github.workspace }}\_build\* ${{ github.workspace }}\meditec
-            copy ${{ github.workspace }}\_build\* ${{ github.workspace }}\pagro
+            xcopy ${{ github.workspace }}\_build ${{ github.workspace }}\all4life /i /e
+            xcopy ${{ github.workspace }}\_build ${{ github.workspace }}\bboplus /i /e
+            xcopy ${{ github.workspace }}\_build ${{ github.workspace }}\meditec /i /e
+            xcopy ${{ github.workspace }}\_build ${{ github.workspace }}\pagro /i /e
     
     - name: Move Shop-Data
       run: |
-          move '${{ github.workspace }}\centauriBaseShop/Shops/all4life' '${{ github.workspace }}\all4life'
-          move '${{ github.workspace }}\centauriBaseShop/Shops/bboplus' '${{ github.workspace }}\bboplus'
-          move '${{ github.workspace }}\centauriBaseShop/Shops/meditec' '${{ github.workspace }}\meditec'
-          move '${{ github.workspace }}\centauriBaseShop/Shops/pagro' '${{ github.workspace }}\pagro'
+          xcopy '${{ github.workspace }}\centauriBaseShop/Shops/all4life' '${{ github.workspace }}\all4life' /i /e
+          xcopy '${{ github.workspace }}\centauriBaseShop/Shops/bboplus' '${{ github.workspace }}\bboplus' /i /e
+          xcopy '${{ github.workspace }}\centauriBaseShop/Shops/meditec' '${{ github.workspace }}\meditec' /i /e
+          xcopy '${{ github.workspace }}\centauriBaseShop/Shops/pagro' '${{ github.workspace }}\pagro' /i /e
 
     - name: Compile CSS from SCSS files
       uses: gha-utilities/sass-build@v0.4.9
