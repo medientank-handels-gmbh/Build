@@ -123,17 +123,17 @@ jobs:
       uses: gha-utilities/sass-build@v0.4.9
       with:
         source: |
-          ${{ github.workspace }}\${{ inputs.solution }}\css/centauri.scss
+          ${{ github.workspace }}\_build\css/centauri.scss
           ${{ github.workspace }}\all4life\css/centauri.scss
           ${{ github.workspace }}\bboplus\css/centauri.scss
           ${{ github.workspace }}\meditec\css/centauri.scss
           ${{ github.workspace }}\pagro\css/centauri.scss
         destination: |
-          ${{ github.workspace }}\${{ inputs.solution }}\css/centauri.min.css
-          ${{ github.workspace }}\all4life\css/centauri.scss
-          ${{ github.workspace }}\bboplus\css/centauri.scss
-          ${{ github.workspace }}\meditec\css/centauri.scss
-          ${{ github.workspace }}\pagro\css/centauri.scss
+          ${{ github.workspace }}\_build\css/centauri.min.css
+          ${{ github.workspace }}\all4life\css/centauri.min.scss
+          ${{ github.workspace }}\bboplus\css/centauri.min.scss
+          ${{ github.workspace }}\meditec\css/centauri.min.scss
+          ${{ github.workspace }}\pagro\css/centauri.min.scss
 
     - name: Zip Build
       run: |
