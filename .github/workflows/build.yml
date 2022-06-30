@@ -107,10 +107,10 @@ jobs:
 
     - name: Copy Shops
       run: |
-            xcopy ${{ github.workspace }}\_build ${{ github.workspace }}\all4life /i /e
-            xcopy ${{ github.workspace }}\_build ${{ github.workspace }}\bboplus /i /e
-            xcopy ${{ github.workspace }}\_build ${{ github.workspace }}\meditec /i /e
-            xcopy ${{ github.workspace }}\_build ${{ github.workspace }}\pagro /i /e
+            xcopy ${{ github.workspace }}\_build .\all4life /i /e
+            xcopy ${{ github.workspace }}\_build .\bboplus /i /e
+            xcopy ${{ github.workspace }}\_build .\meditec /i /e
+            xcopy ${{ github.workspace }}\_build .\pagro /i /e
     
     - name: Move Shop-Data
       run: |
@@ -123,17 +123,17 @@ jobs:
       uses: gha-utilities/sass-build@v0.4.9
       with:
         source: |
-          ${{ github.workspace }}\_build\css/centauri.scss
-          ${{ github.workspace }}\all4life\css/centauri.scss
-          ${{ github.workspace }}\bboplus\css/centauri.scss
-          ${{ github.workspace }}\meditec\css/centauri.scss
-          ${{ github.workspace }}\pagro\css/centauri.scss
+          ${{ github.workspace }}\_build\css\centauri.scss
+          .\all4life\css\centauri.scss
+          .\bboplus\css\centauri.scss
+          .\meditec\css\centauri.scss
+          .\pagro\css\centauri.scss
         destination: |
           ${{ github.workspace }}\_build\css/centauri.min.css
-          ${{ github.workspace }}\all4life\css/centauri.min.scss
-          ${{ github.workspace }}\bboplus\css/centauri.min.scss
-          ${{ github.workspace }}\meditec\css/centauri.min.scss
-          ${{ github.workspace }}\pagro\css/centauri.min.scss
+          .\all4life\css\centauri.min.scss
+          .\bboplus\css\centauri.min.scss
+          .\meditec\css\centauri.min.scss
+          .\pagro\css\centauri.min.scss
 
     - name: Zip Build
       run: |
